@@ -13,8 +13,13 @@
          (or (some #(= % p2) nor-dcs1)
              (some #(= % p1) nor-dcs2)))))
 
+(defn asserted-term?
+  [p ct]
+  (when (ct/asserted? p ct)
+    p))
+
 (defn detect-contradiction
-  "When a change has been made to p1, this function can be used to 
+  "When a change has been made to p1, this function can be used to
    determine if p1 is now contradictory to some other term."
   [p1 ct]
   (and (ct/asserted? p1 ct)
@@ -24,4 +29,4 @@
              nor-ucs (when ucs-map (ucs-map (slot/find-slot 'nor)))
              nor-ucs (when nor-ucs @nor-ucs)]
          (or (some #(ct/asserted? % ct) nor-dcs)
-             (some #(ct/asserted? % ct) nor-ucs)))))
+                   (some #(ct/asserted? % ct) nor-ucs)))))

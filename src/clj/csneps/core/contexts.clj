@@ -8,6 +8,10 @@
   "A map from context name to context."
   (ref (hash-map)))
 
+(defn testPrint
+  [p n context]
+  (println p + "  " + n +  "  " + context))
+
 (def ^:dynamic *CurrentContext*
   "The current context."
   (ref nil))
@@ -59,8 +63,8 @@
   (assert (cl-seqable? hyps) (set? hyps))
   (if (find-context name)
     (println "A context named" name "already exists.")
-    (dosync (alter CONTEXTS assoc name (Context. name docstring 
-                                                 (doall (map #(find-context %) parents)) 
+    (dosync (alter CONTEXTS assoc name (Context. name docstring
+                                                 (doall (map #(find-context %) parents))
                                                  (ref (set hyps))
                                                  false))))
   (find-context name))
@@ -98,29 +102,40 @@
       (recur (apply concat (map #(:parents %) cts))
              (set/union hyps (apply set/union (map #(deref (:hyps %)) cts)))))))
 
+
+(defn hyps-br
+  "Returns the full set of hyps of ct, both those local to
+   ct, and those of its parents."
+  [ct]
+  (loop [cts (list ct)
+         hyps #{}]
+    (if (empty? cts)
+      hyps
+      (recur (apply concat (map #(:Proposition %) cts))
+             (set/union hyps (apply set/union (map #(deref (:hyps %)) cts)))))))
 (defn asserted?
   "If p has an origin set which is a subset of the hyps of the
    context ct, then it is asserted. Local key indicates to only
    look in the current context, and not parents."
   [p ct & {:keys [local]}]
   (let [context (find-context ct)]
-    (when context 
-      (if (@(:hyps context) (:name p)) 
+    (when context
+      (if (@(:hyps context) (:name p))
         context
-        (let [cthyps (if local 
-                       @(:hyps context) 
+        (let [cthyps (if local
+                       @(:hyps context)
                        (hyps context))]
           (cond
-            (cthyps (:name p)) 
+            (cthyps (:name p))
             context
-            (some 
+            (some
               #(set/subset? (second %) cthyps)
               (filter #(not (= (first %) 'hyp)) (@csneps/support p)))
             context))))))
 
 (defn ontology-term?
-  "Returns true if p is an ontology term. That is either: 
-   1) p is asserted in OntologyCT, or 
+  "Returns true if p is an ontology term. That is either:
+   1) p is asserted in OntologyCT, or
    2) p is named the same as a semantic type, or
    3) p is an arbitrary with only a single restriction of the form (Isa x <SemanticType>)"
   [p]

@@ -31,23 +31,37 @@
                  [org.freehep/freehep-graphicsio-swf "2.4"]
                  [org.jpedal/jpedal-lgpl "4.74b27"]
                  [org.swinglabs/swingx "1.6.1"]
-                 [net.xeon/jspf.core "1.0.2"]
+                 ;[net.xeon/jspf.core "1.0.2"]
                  [org.clojure/tools.cli "0.4.1"]
                  [reply/reply "0.4.3"]
                  [aleph "0.4.6"]
                  [gloss "0.2.6"]]
   :dev [[org.clojure/tools.namespace "0.2.4"]]
-  :repositories {"FreeHEP" "http://java.freehep.org/maven2"
-                 "mvnrepo" "https://mvnrepository.com"
-                 "jpedal" "http://maven.geomajas.org"
-                 "local" ~(str (.toURI (java.io.File. "local_maven_repo")))}
+
+  :repositories [
+                 ["FreeHEP" "https://java.freehep.org/maven2"]
+                 ["mvnrepo" "https://mvnrepository.com"]
+                 ["jpedal" "https://maven.geomajas.org"]
+                 ["local" ~(str (.toURI (java.io.File. "local_maven_repo")))]
+                 ["jitpack" "https://jitpack.io"]
+                 ["central" "https://repo1.maven.org/maven2"]
+                 ["clojure" "https://build.clojure.org/releases"]
+                 ["clojars" "https://clojars.org/repo"]
+                 ["java.net" "https://download.java.net/maven/2"]
+                 ["jboss.release" "https://repository.jboss.org/nexus/content/groups/public"]
+                 ["terracotta-releases" "https://www.terracotta.org/download/reflector/releases"]
+                 ["terracotta-snapshots" "https://www.terracotta.org/download/reflector/snapshots"]
+                 ["apache.snapshots" "https://repository.apache.org/snapshots"]
+                 ]
+
+
   :plugins [[lein-swank "1.4.5"]]
   :source-paths ["src/clj/"]
   :source-path "src/clj/"
   :java-source-paths ["src/jvm/"] ;leiningen 2 compat.
   :java-source-path "src/jvm/" ;leiningen 1.x compat.
-  ;:project-init (require 'clojure.pprint) 
+  ;:project-init (require 'clojure.pprint)
   :repl-options [:print clojure.core/println] ;[:print clojure.pprint/pprint]
-  :jvm-opts ["-server"] 
+  :jvm-opts ["-server"]
   :main csneps.core.snuser
   :profiles {:uberjar {:aot :all}})
